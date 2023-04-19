@@ -6,10 +6,10 @@
   "author": "Vyacheslav Zamaraev",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^27.5.2",
     "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
-    "@types/jest": "^27.5.2",
     "eslint": "^8.32.0",
     "husky": "^8.0.3",
     "prettier": "^2.8.3",
@@ -17,19 +17,18 @@
     "ts-node": "^10.9.1",
     "web-vitals": "^2.1.4"
   },
-
   "dependencies": {
+    "@ant-design/icons": "^5.0.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
+    "antd": "^5.4.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1"
-    
   },
-
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -39,7 +38,6 @@
     "format": "npx eslint ./src --fix",
     "dev": "npx nodemon"
   },
-
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -59,4 +57,3 @@
     ]
   }
 }
-
