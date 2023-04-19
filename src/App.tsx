@@ -1,25 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+import { Card, Input, List, Typography, Image } from "antd"
 import './App.css';
 
 function App() {
+  const [seachedText,setSeachedText] = useState("")
+  const [dataSource,setDataSource] = useState([])
+
+
+  useEffect(()=>{
+    // API
+    fetch(`https://dummyjson.com/products/search?q=${seachedText}`)
+    .then(res => res.json())
+    .then(response => {
+      console.log(response.poducts)
+      setDataSource(response.poducts)
+    })
+    // .then(json => console.log(json))
+  }, [seachedText])
+
+
+// const renderCards: React.ReactNode | undefined = (item: never, index: number)=> 
+// {
+
+
+// }
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Typography.Title
+      style={{textAlign: "center",fontFamily:"monospace"}}
+      > My Gallery
+      </Typography.Title>
+      <Input.Search
+        style={{maxWidth: 500, display:'flex', margin:'auto'}}
+        onSearch={(value)=>{ setSeachedText(value) }}
+
+      > </Input.Search>
+      <List
+        dataSource={dataSource}
+        renderItem={(item) => (
+          <List.Item>
+            <Card key={item?.id!} title={item?.title!}>
+              <Image src={item?.thumbnail!}></Image>
+            </Card>
+          </List.Item>
+        )}
+      ></List>
+
+
+    </>
   );
 }
 
