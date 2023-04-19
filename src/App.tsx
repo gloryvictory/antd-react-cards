@@ -2,10 +2,33 @@ import React, { useEffect, useState } from 'react';
 import { Card, Input, List, Typography, Image } from "antd"
 import './App.css';
 
+export interface Pokedex {
+  products: Product[];
+  total:    number;
+  skip:     number;
+  limit:    number;
+}
+
+export interface Product {
+  id:                 number;
+  title:              string;
+  description:        string;
+  price:              number;
+  discountPercentage: number;
+  rating:             number;
+  stock:              number;
+  brand:              string;
+  category:           string;
+  thumbnail:          string;
+  images:             string[];
+}
+
+
 function App() {
   const [seachedText,setSeachedText] = useState("")
-  const [dataSource,setDataSource] = useState([])
-
+  const [dataSource,setDataSource] = useState<Product[]>([])
+  const [previewImages,setPreviewImages] = useState<string[]>([])
+  
 
   useEffect(()=>{
     // API
@@ -39,15 +62,48 @@ function App() {
       > </Input.Search>
       <List
         dataSource={dataSource}
+        grid={{
+          gutter: 16,
+          xs: 1,
+          sm: 2,
+          md: 4,
+          lg: 4,
+          xl: 5,
+          xxl: 6,
+        }}
         renderItem={(item) => (
           <List.Item>
-            <Card key={item?.id!} title={item?.title!}>
-              <Image src={item?.thumbnail!}></Image>
+            <Card 
+              style={{height:300, margin: 12, }}
+              key={item?.id} 
+              title={item?.title}
+            
+            >
+              <Image 
+                src={item?.thumbnail}
+                preview={{visible:false}}
+                onClick={()=>{
+                setPreviewImages(item.images)
+                }}
+              ></Image>
             </Card>
           </List.Item>
         )}
       ></List>
-
+      {
+        previewImages.length > 0 
+        ?<Image.PreviewGroup 
+          preview={{ visible: (previewImages.length?true:false) }}
+          // onVisibleChange: (value)
+           
+          >
+          {previewImages.map(
+            (image)=>{
+              return <Image src={image}></Image>
+            })}
+          </Image.PreviewGroup>
+      : null
+      }
 
     </>
   );
