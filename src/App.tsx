@@ -31,37 +31,28 @@ const App: React.FC = () => {
   const [loading,setLoading] = useState(false)
   const [dataSource,setDataSource] = useState<Product[]>([])
   const [previewImages,setPreviewImages] = useState<string[]>([])
-  
+
+  useEffect(()=>{
+    // API
+    asyncGetCall()
+  }, [seachedText])
+
   const asyncGetCall = async () => {
     try {
       setLoading(true)
          const response = await fetch(`https://dummyjson.com/products/search?q=${seachedText}`) ;
          const data = await response.json();
         // enter you logic when the fetch is successful
-        //  console.log(data);
          const { products } = data
-        //  console.log(products);
          setDataSource(products)
          setLoading(false)
        } catch(error) {
           // enter your logic for when there is an error (ex. error toast)
           console.log(error)
-         } 
+         }
   }
 
-  useEffect(()=>{
-    // API
-    asyncGetCall()
-   
-  }, [seachedText])
-
   const onSearch = (value: string)=>{ setSeachedText(value) }
-
-// const renderCards: React.ReactNode | undefined = (item: never, index: number)=> 
-// {
-
-
-// }
 
 
   return (
@@ -87,8 +78,8 @@ const App: React.FC = () => {
         <Typography.Text >Поиск для: <Typography.Text strong>{seachedText||"Все"}</Typography.Text> </Typography.Text>
       </Space>
 
-            <List
-            loading={loading}
+      <List
+      loading={loading}
         dataSource={dataSource}
         grid={{
           gutter: 16,
@@ -104,10 +95,10 @@ const App: React.FC = () => {
             <Card
               hoverable
               style={{height:300, margin: 12, overflow:"hidden"}}
-              key={item?.id} 
+              key={item?.id}
               title={item?.title}
             >
-              <Image 
+              <Image
                 src={item?.thumbnail}
                 preview={{visible:false}}
                 onClick={()=>{
