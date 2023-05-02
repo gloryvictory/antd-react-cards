@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Input, List, Typography, Image } from "antd"
+import {Space, Card, Input, List, Typography, Image } from "antd"
 import './App.css';
+const { Search } = Input;
 
 export interface Pokedex {
   products: Product[];
@@ -24,23 +25,37 @@ export interface Product {
 }
 
 
-function App() {
+
+const App: React.FC = () => {
   const [seachedText,setSeachedText] = useState("")
+  const [loading,setLoading] = useState(false)
   const [dataSource,setDataSource] = useState<Product[]>([])
   const [previewImages,setPreviewImages] = useState<string[]>([])
   
+  const asyncGetCall = async () => {
+    try {
+      setLoading(true)
+         const response = await fetch(`https://dummyjson.com/products/search?q=${seachedText}`) ;
+         const data = await response.json();
+        // enter you logic when the fetch is successful
+        //  console.log(data);
+         const { products } = data
+        //  console.log(products);
+         setDataSource(products)
+         setLoading(false)
+       } catch(error) {
+          // enter your logic for when there is an error (ex. error toast)
+          console.log(error)
+         } 
+  }
 
   useEffect(()=>{
     // API
-    fetch(`https://dummyjson.com/products/search?q=${seachedText}`)
-    .then(res => res.json())
-    .then(response => {
-      console.log(response.poducts)
-      setDataSource(response.poducts)
-    })
-    // .then(json => console.log(json))
+    asyncGetCall()
+   
   }, [seachedText])
 
+  const onSearch = (value: string)=>{ setSeachedText(value) }
 
 // const renderCards: React.ReactNode | undefined = (item: never, index: number)=> 
 // {
@@ -51,16 +66,29 @@ function App() {
 
   return (
     <>
+     <Space
+        style={{padding: "0px 16px"}}
+        direction="vertical"
+     >
       <Typography.Title
       style={{textAlign: "center",fontFamily:"monospace"}}
       > My Gallery
       </Typography.Title>
-      <Input.Search
+      <Space
         style={{maxWidth: 500, display:'flex', margin:'auto'}}
-        onSearch={(value)=>{ setSeachedText(value) }}
+        direction="vertical">
+        <Search
+          style={{maxWidth: 500, display:'flex', margin:'auto'}}
+          onSearch={onSearch}
+          placeholder="введите поисковой запрос"
+          allowClear
+          // onSearch={(value)=>{ setSeachedText(value) }}
+        />
+        <Typography.Text >Поиск для: <Typography.Text strong>{seachedText||"Все"}</Typography.Text> </Typography.Text>
+      </Space>
 
-      > </Input.Search>
-      <List
+            <List
+            loading={loading}
         dataSource={dataSource}
         grid={{
           gutter: 16,
@@ -73,11 +101,11 @@ function App() {
         }}
         renderItem={(item) => (
           <List.Item>
-            <Card 
-              style={{height:300, margin: 12, }}
+            <Card
+              hoverable
+              style={{height:300, margin: 12, overflow:"hidden"}}
               key={item?.id} 
               title={item?.title}
-            
             >
               <Image 
                 src={item?.thumbnail}
@@ -91,11 +119,16 @@ function App() {
         )}
       ></List>
       {
-        previewImages.length > 0 
-        ?<Image.PreviewGroup 
-          preview={{ visible: (previewImages.length?true:false) }}
+        previewImages.length > 0
+        ?<Image.PreviewGroup
+          preview={{
+            visible: (previewImages.length?true:false),
+            onVisibleChange:(value)=>{
+            if(!value){
+              setPreviewImages([])
+            }
+          }}}
           // onVisibleChange: (value)
-           
           >
           {previewImages.map(
             (image)=>{
@@ -104,7 +137,7 @@ function App() {
           </Image.PreviewGroup>
       : null
       }
-
+      </Space>
     </>
   );
 }
